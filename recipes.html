@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="recipes.html">Рецепты</a></li>
+                <li><a href="forum.html">Форум</a></li>
+                <div id="user-count" class="user-count" style="display: none;"></div>
+            </ul>
+        </nav>
+    </header>
+    <div class="snow"></div>
+    <main class="content">
+        <h2 class="fade-in">Здесь вы найдете лучшие рецепты!</h2>
+        <p class="fade-in">Cделайте ваш Новый Год незабываемым!</p>
+        <div class = "container">
+            <div class = "left-column">
+                <section class="gif-section">
+                    <img src="new-year.gif" alt="Новогодняя Гифка" class="holiday-gif">
+                </section>
+            </div> 
+            <div class="right-column">
+                <h3>Популярные рецепты:</h3>
+                <ul>
+                    <li><button class="recipe-btn" onclick="showFireworks('Имбирное печенье', 'recipe2.html')">Имбирное печенье</button></li>
+                    <li><button class="recipe-btn" onclick="showFireworks('Оливье', 'recipe3.html')">Оливье</button></li>  
+                    <li><button class="recipe-btn" onclick="showFireworks('Глинтвейн', 'recipe1.html')">Глинтвейн</button></li>                 
+                </ul>
+                <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+            </div>
+    </main>
+    
+    <div class="snowdrift"></div>
+    <div class="snowdrift1" style="left: 0%; width: 100%; height: 90px;"></div> 
+    <audio autoplay loop>
+        <source src="new-year.mp3" type="audio/mpeg"> 
+    </audio>
+    <script src="script.js"></script>
+    <script>
+        // Функция для отображения количества пользователей
+        function showUserCount() {
+            const userCountDiv = document.getElementById('user-count');
+            userCountDiv.textContent = '5 пользователей';
+            userCountDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

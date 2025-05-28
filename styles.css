@@ -1,0 +1,349 @@
+/* Сброс стилей по умолчанию */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Основные стили для body */
+body {
+    background: linear-gradient(to bottom, #BB3033, #7A1B17);
+    color: white;
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+}
+
+/* Стили для шапки */
+.header {
+    position: fixed; /* Фиксируем шапку */
+    text-align: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #980606; /* Цвет фона шапки */
+    padding: 10px 20px; /* Внутренние отступы */
+    z-index: 1000; /* Превосходство над другими элементами */
+    height: 60px; /* Высота шапки */
+    display: flex; /* Flexbox для навигации */
+    justify-content: center; /* Центрирование содержимого */
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+.content {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Стили для навигационного меню */
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    transition: background 0.3s;
+}
+
+nav a:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+}
+
+/* Стили для основного контента */
+.content {
+    padding-top: 70px; /* Отступ сверху для контента, чтобы не перекрывался шапкой */
+    text-align: center;
+    min-height: 100vh;
+}
+/* Стили для заголовков */
+h1, h2 {
+    margin: 20px 0; /* Отступ сверху и снизу */
+    font-size: 2.5em;
+}
+
+/* Стили для абзацев */
+p {
+    margin: 15px 0; /* Отступ сверху и снизу */
+}
+
+
+.snow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    animation-name: fall;
+    animation-timing-function: linear;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.celebrate-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: #e74c3c; /* Красный цвет для кнопки */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+    transform: translate(-50%, -50%); /* Центрируем кнопку */
+}
+
+.celebrate-button:hover {
+    transform: translate(-50%, -50%) scale(1.1); /* Центрируем и увеличиваем при наведении */
+    background-color: #c0392b; /* Темнее при наведении */
+}
+
+.snowdrift {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 45px; /* Высота сугроба */
+    background: white; /* Цвет сугроба */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Легкая тень для эффекта */
+}
+
+.snowdrift1 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px; /* Высота сугроба */
+    background: white; /* Цвет сугроба */
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Легкая тень для эффекта */
+}
+
+.fireworks {
+    top: 50%;
+    left: 50%;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    width: 200px;
+    height: 200px; 
+    background: radial-gradient(circle, rgba(255, 255, 0, 0.8), rgba(255, 0, 0, 0.8));
+    border-radius: 50%;
+    animation: explode 0.5s forwards;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 10px;
+    }
+
+    nav a {
+        padding: 5px 10px;
+    }
+
+    .content {
+        font-size: 16px;
+    }
+
+    .celebrate-button {
+        padding: 10px 20px;
+        font-size: 18px;
+    }
+}
+
+/* Стили для кнопки &quot;Смотреть!&quot; */
+.view-button {
+    display: inline-block; /* Делает кнопку блочным элементом */
+    padding: 10px 20px; /* Внутренние отступы */
+    background-color: #e74c3c; /* Цвет фона кнопки */
+    color: white; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    border-radius: 5px; /* Закругленные углы */
+    margin-top: 10px; /* Отступ сверху */
+    font-size: 18px; /* Размер шрифта */
+    transition: background-color 0.3s; /* Плавный переход цвета фона */
+    width: 200px; /* Фиксированная ширина кнопки */
+    text-align: center; /* Центрирование текста */
+}
+
+.view-button:hover {
+    background-color: #c0392b; /* Цвет фона при наведении */
+}
+
+.holiday-gif {
+    max-width: 100%; /* Максимальная ширина для адаптивности */
+    height: auto; /* Автоматическая высота */
+    border-radius: 10px; /* Закругление углов */
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+.left-column {
+    flex: 1;
+    margin-right: 20px;
+}
+.right-column {
+    flex: 1;
+    background-color: #ffffff; /* Белый фон */
+    border: 1px solid #ddd; /* Светло-серая рамка */
+    border-radius: 8px; /* Закругленные углы */
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.right-column h2 {
+    margin-bottom: 10px;
+    color: #e74c3c; /* Красный цвет */
+}
+.right-column h3 {
+    margin-bottom: 10px;
+    color: #e74c3c; /* Красный цвет */
+}
+.right-column p {
+    margin-bottom: 10px;
+    color: #e74c3c; /* Красный цвет */
+}
+/* Стили для списка */
+.right-column ul {
+    list-style-type: none; /* Убираем маркеры */
+}
+
+.right-column ul li {
+    margin: 10px 0;
+}
+
+.right-column ul li a {
+    text-decoration: none; /* Убираем подчеркивание */
+    color: red; /* Синий цвет для ссылок */
+    transition: color 0.3s; /* Плавный переход цвета */
+}
+
+.right-column ul li a:hover {
+    color: #e74c3c; /* Цвет при наведении */
+}
+
+/* Стили для гифки */
+.holiday-gif {
+    max-width: 100%; /* Ограничиваем ширину */
+    border-radius: 8px; /* Закругленные углы */
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Колонки становятся вертикальными на маленьких экранах */
+    }
+
+    .left-column, .right-column {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}
+
+
+.recipe-btn {
+    background-color:#e74c3c;; /* Синий цвет */
+    color: white;
+    border: none;
+    padding: 15px 30px; /* Увеличенные отступы */
+    font-size: 1.2em; /* Увеличенный шрифт */
+    border-radius: 5px; /* Закругленные углы */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 10px 0; /* Отступ между кнопками */
+}
+
+.recipe-btn:hover {
+    background-color:  #c0392b;
+    transform: scale(1.1); /* Темнее при наведении */
+}
+
+/* Стили для формы */
+form {
+    display: flex; /* Располагаем элементы в линию */
+    flex-direction: column; /* Элементы по колонкам */
+}
+
+
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.button1 {
+    background-color: #004080;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button1:hover {
+    background-color: #003366;
+}
