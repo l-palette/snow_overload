@@ -42,32 +42,93 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             margin: 0 10px;
         }
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background-color: #ff4444;
+            border-left: 5px solid #cc0000;
+        }
+
+        .notification.success {
+            background-color: #00C851;
+            border-left: 5px solid #007E33;
+        }
     </style>
     <script>
-        function handleLogin() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+         function handleLogin(event) {
+            event.preventDefault(); // Предотвращаем стандартную отправку формы
 
-    fetch('login.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showFireworks(data.message, data.redirect);
-        } else {
-            alert(data.message);
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Создаем FormData объект для правильной отправки данных
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            fetch('php/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect || 'index.html';
+                    }, 1500);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка соединения с сервером', 'error');
+            });
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Ошибка соединения с сервером');
-    });
-}
+
+        // Функция для показа уведомлений
+        function showNotification(message, type) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+
+            container.appendChild(notification);
+
+            // Показываем уведомление
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            // Убираем уведомление через 5 секунд
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 5000);
+        }
         function validateLogin() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -79,55 +140,6 @@
 
             // Enable button only when all fields are valid
             button.disabled = !(isEmailValid && password.length >= 6);
-        }
-
-        function handleLogin() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            fetch('login.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showFireworks(data.message, data.redirect);
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Ошибка соединения с сервером');
-            });
-        }
-
-        window.onload = function() {
-            const inputs = document.querySelectorAll('#login-form input');
-            inputs.forEach(input => {
-                input.addEventListener('input', validateLogin);
-            });
-            validateLogin(); // Initial button state
-            showUserCount(); // Show user count
-        }
-
-        function showUserCount() {
-            fetch('get_user_count.php')
-                .then(response => response.json())
-                .then(data => {
-                    const userCountDiv = document.getElementById('user-count');
-                    userCountDiv.textContent = data.count + ' пользователей в системе';
-                    userCountDiv.style.display = 'block';
-                })
-                .catch(() => {
-                    const userCountDiv = document.getElementById('user-count');
-                    userCountDiv.textContent = 'Добро пожаловать!';
-                    userCountDiv.style.display = 'block';
-                });
         }
     </script>
 </head>
@@ -146,24 +158,25 @@
     <div class="content">
         <div class="form">
             <section id="login-form">
-                <h2>Вход в аккаунт</h2>
+            <h2>Вход в аккаунт</h2>
+            <div id="user-count" style="text-align: center; margin-bottom: 20px; font-style: italic;"></div>
 
-                <div id="user-count" style="text-align: center; margin-bottom: 20px; font-style: italic;"></div>
-
+            <form id="loginForm" onsubmit="handleLogin(event)">
                 <label for="email">Электронная почта:</label>
-                <input type="email" id="email" name="email" required placeholder="Ваш email">
+                <input type="email" id="email" name="email" required placeholder="Ваш email" oninput="validateLogin()">
 
                 <label for="password">Пароль:</label>
-                <input type="password" id="password" name="password" required placeholder="Не менее 6 символов" minlength="6">
+                <input type="password" id="password" name="password" required placeholder="Ваш пароль" oninput="validateLogin()">
 
                 <div class="login-links">
                     <a href="register.html">Создать аккаунт</a>
                 </div>
 
-                <button class="recipe-btn" id="login-button" onclick="handleLogin()" disabled>Войти</button>
+                <button type="submit" class="recipe-btn" id="login-button" disabled>Войти</button>
+            </form>
 
-                <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
-            </section>
+            <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+        </section>
         </div>
     </div>
     <div class="snowdrift"></div>
@@ -173,5 +186,6 @@
         Ваш браузер не поддерживает аудио.
     </audio>
     <script src="script.js"></script>
+    <div id="notification-container"></div>
 </body>
 </html>

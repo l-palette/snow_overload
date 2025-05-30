@@ -301,3 +301,26 @@ lcd php
 rm login.php && put login.php
 rm logout.php && put logout.php
 rm register.php && put register.php
+
+
+get 404.html
+get feedback.html
+get forum.html
+get index.html
+get login.html
+get recipe1.html
+get recipe2.html
+get recipe3.html
+get recipes.html
+get register.html
+
+rm 404.html
+rm feedback.html
+rm forum.html
+rm index.html
+rm login.html
+rm recipe1.html
+rm recipe2.html
+rm recipe3.html
+rm recipes.html
+rm register.html
