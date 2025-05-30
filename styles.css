@@ -302,20 +302,35 @@ p {
 
 
 .recipe-btn {
-    background-color:#e74c3c;; /* Синий цвет */
+    background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 15px 30px; /* Увеличенные отступы */
-    font-size: 1.2em; /* Увеличенный шрифт */
-    border-radius: 5px; /* Закругленные углы */
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin: 10px 0; /* Отступ между кнопками */
+    transition: all 0.3s ease; /* Добавим плавность для всех свойств */
+    margin: 10px 0;
+    display: inline-block; /* Четкое определение типа элемента */
+    position: relative; /* Для корректного позиционирования */
+    z-index: 1; /* Определяем уровень слоя */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    max-width: 100%; /* Не позволит кнопке выйти за границы родителя */
+    overflow: hidden; /* На всякий случай */
+    text-align: center;
+    text-decoration: none; /* Если это ссылка */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Добавим тень для объема */
 }
 
 .recipe-btn:hover {
-    background-color:  #c0392b;
-    transform: scale(1.1); /* Темнее при наведении */
+    background-color: #c0392b;
+    transform: scale(1.05); /* Уменьшим масштаб для более плавного эффекта */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Усилим тень при наведении */
+}
+
+/* Добавим активное состояние */
+.recipe-btn:active {
+    transform: scale(0.98);
 }
 
 /* Стили для формы */
@@ -347,4 +362,78 @@ textarea {
 
 .button1:hover {
     background-color: #003366;
+}
+
+ /* Дополнительные стили для формы входа */
+.login-links {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    font-size: 0.9em;
+}
+
+.login-links a {
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.login-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 0 10px;
+}
+/* Стили для уведомлений */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    max-width: 300px;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.error {
+    background-color: #ff4444;
+    border-left: 5px solid #cc0000;
+}
+
+.notification.success {
+    background-color: #00C851;
+    border-left: 5px solid #007E33;
+}
+.error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
 }

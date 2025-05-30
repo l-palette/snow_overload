@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация в системе</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background-color: #ff4444;
+            border-left: 5px solid #cc0000;
+        }
+
+        .notification.success {
+            background-color: #00C851;
+            border-left: 5px solid #007E33;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .login-link a {
+            color: #fff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="recipes.html">Рецепты</a></li>
+                <li><a href="forum.html">Форум</a></li>
+                <li><a href="login.html" class="active">Войти</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="snow"></div>
+    <div class="content">
+        <div class="form">
+            <section id="register-form">
+                <h2>Регистрация аккаунта</h2>
+
+                <form id="registerForm">
+                    <label for="reg-username">Имя пользователя:</label>
+                    <input type="text" id="reg-username" name="username" required placeholder="Ваше имя">
+
+                    <label for="reg-email">Электронная почта:</label>
+                    <input type="email" id="reg-email" name="email" required placeholder="Ваш email">
+
+                    <label for="reg-password">Пароль (минимум 6 символов):</label>
+                    <input type="password" id="reg-password" name="password" required placeholder="Ваш пароль" minlength="6">
+
+                    <label for="reg-confirm-password">Подтвердите пароль:</label>
+                    <input type="password" id="reg-confirm-password" name="confirm_password" required placeholder="Подтвердите ваш пароль" minlength="6">
+
+                    <button type="submit" class="recipe-btn" id="register-button">Зарегистрироваться</button>
+                </form>
+
+                <div class="login-links">
+                    <a href="login.html">Уже есть аккаунт?</a>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="snowdrift"></div>
+    <div class="snowdrift1" style="left: 0%; width: 100%; height: 90px;"></div>
+    <audio autoplay loop>
+        <source src="new-year.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио.
+    </audio>
+    <script src="script.js"></script>
+    <div id="notification-container"></div>
+    <script>
+        // Валидация формы в реальном времени
+        function validateRegisterForm() {
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const button = document.getElementById('register-button');
+
+            // Проверка email
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmailValid = emailPattern.test(email);
+
+            // Проверка пароля
+            const isPasswordValid = password.length >= 6;
+            const passwordsMatch = password === confirmPassword;
+
+            button.disabled = !(username && isEmailValid && isPasswordValid && passwordsMatch);
+        }
+
+        // Инициализация валидации
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('#registerForm input');
+            inputs.forEach(input => {
+                input.addEventListener('input', validateRegisterForm);
+            });
+            validateRegisterForm();
+        });
+
+        // Обработка отправки формы
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+            // Проверка совпадения паролей
+            if (password !== confirmPassword) {
+                showNotification('Пароли не совпадают', 'error');
+                return;
+            }
+
+            // Проверка сложности пароля
+            if (password.length < 6) {
+                showNotification('Пароль должен содержать минимум 6 символов', 'error');
+                return;
+            }
+
+            // Подготовка данных для отправки
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('password', password);
+
+            // Отправка данных на сервер
+            fetch('php/register.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect || 'login.html';
+                    }, 1500);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка соединения с сервером', 'error');
+            });
+        });
+
+        // Функция для показа уведомлений
+        function showNotification(message, type) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+
+            container.appendChild(notification);
+
+            // Показываем уведомление
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            // Убираем уведомление через 5 секунд
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

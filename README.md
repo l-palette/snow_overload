@@ -2,16 +2,24 @@
 Логин netforces
 Пароль S6978a49
 
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    role ENUM('editor', 'admin') NOT NULL DEFAULT 'editor',
+    UNIQUE KEY user_email_unique (username, email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ### Структура
 snow_overload/
 |   php/
 |   |   login.php
+|   |   register.php
 |   |   test_db.php
 |   .gitignore
 |   404.html
 |   feedback.html
-|   forum.html
 |   index.html
 |   login.html
 |   recipe1.html
@@ -22,8 +30,10 @@ snow_overload/
 |   script.js
 |   sitemap.xml
 |   styles.css
+|   users.html
+|   post.html
 
-login.php
+### login.php
 <?php
 header('Content-Type: application/json');
 
@@ -33,62 +43,66 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $email = $_POST['email'] ?? '';
-$password = $_POST['password'] ?? '';
+$user_password = $_POST['password'] ?? '';
 
 if (empty($email)) {
     echo json_encode(['success' => false, 'message' => 'Введите email']);
     exit;
 }
 
-if (empty($password)) {
+if (empty($user_password)) {
     echo json_encode(['success' => false, 'message' => 'Введите пароль']);
     exit;
 }
 
 $host = "localhost";
 $username = "netforces";
-$password = "S6978a49";
+$db_password = "S6978a49";
 $dbname = "netforces";
 
-// Using mysqli instead of PDO
-$conn = new mysqli($host, $username, $password, $dbname);
+try {
+    $conn = new mysqli($host, $username, $db_password, $dbname);
 
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Ошибка подключения: ' . $conn->connect_error]);
-    exit;
+    if ($conn->connect_error) {
+        throw new Exception('Ошибка подключения: ' . $conn->connect_error);
+    }
+
+    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        echo json_encode(['success' => false, 'message' => 'Пользователь не найден']);
+        exit;
+    }
+
+    $user = $result->fetch_assoc();
+
+    // Use password_verify to check the hashed password
+    if (password_verify($user_password, $user['password'])) {
+        session_start();
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['email'] = $email;
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Вход выполнен успешно!',
+            'redirect' => 'forum.html'
+        ]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Неверный пароль']);
+    }
+
+    $stmt->close();
+    $conn->close();
+
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()]);
 }
-
-$stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    echo json_encode(['success' => false, 'message' => 'Пользователь не найден']);
-    exit;
-}
-
-$user = $result->fetch_assoc();
-
-if ($password === $user['password']) {
-    session_start();
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['email'] = $email;
-
-    echo json_encode([
-        'success' => true,
-        'message' => 'Вход выполнен успешно!',
-        'redirect' => 'forum.html'
-    ]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Неверный пароль']);
-}
-
-$stmt->close();
-$conn->close();
 ?>
-
-login.html
+### login.html
+```
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -240,7 +254,6 @@ login.html
             <ul>
                 <li><a href="index.html">Главная</a></li>
                 <li><a href="recipes.html">Рецепты</a></li>
-                <li><a href="forum.html">Форум</a></li>
                 <li><a href="login.html" class="active">Войти</a></li>
             </ul>
         </nav>
@@ -249,25 +262,25 @@ login.html
     <div class="content">
         <div class="form">
             <section id="login-form">
-    <h2>Вход в аккаунт</h2>
-    <div id="user-count" style="text-align: center; margin-bottom: 20px; font-style: italic;"></div>
-    
-    <form id="loginForm" onsubmit="handleLogin(event)">
-        <label for="email">Электронная почта:</label>
-        <input type="email" id="email" name="email" required placeholder="Ваш email" oninput="validateLogin()">
+            <h2>Вход в аккаунт</h2>
+            <div id="user-count" style="text-align: center; margin-bottom: 20px; font-style: italic;"></div>
 
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required placeholder="Не менее 6 символов" minlength="6" oninput="validateLogin()">
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <label for="email">Электронная почта:</label>
+                <input type="email" id="email" name="email" required placeholder="Ваш email" oninput="validateLogin()">
 
-        <div class="login-links">
-            <a href="register.html">Создать аккаунт</a>
-        </div>
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required placeholder="Ваш пароль" oninput="validateLogin()">
 
-        <button type="submit" class="recipe-btn" id="login-button" disabled>Войти</button>
-    </form>
-    
-    <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
-</section>
+                <div class="login-links">
+                    <a href="register.html">Создать аккаунт</a>
+                </div>
+
+                <button type="submit" class="recipe-btn" id="login-button" disabled>Войти</button>
+            </form>
+
+            <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+        </section>
         </div>
     </div>
     <div class="snowdrift"></div>
@@ -280,10 +293,9 @@ login.html
     <div id="notification-container"></div>
 </body>
 </html>
+```
 
-
-
-### Для загрузки
+### Для загрузки на FTP
 lftp -u netforces,S6978a49 -p 2021 ftp.web-prj.ru
 lcd /Users/tatiana/PycharmProjects/snow_overload
 rm 404.html && put 404.html
@@ -302,7 +314,7 @@ rm login.php && put login.php
 rm logout.php && put logout.php
 rm register.php && put register.php
 
-
+### Обновить HTML через FTP
 get 404.html
 get feedback.html
 get forum.html

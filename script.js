@@ -55,15 +55,6 @@ document.getElementById('celebrate-button').addEventListener('click', function()
 });
 
 
-function showFireworks(recipe, page) {
-    createFireworks();
-    
-    // Задержка перед переходом на новую страницу
-    setTimeout(() => {
-        window.location.href = page;
-    }, 200); // 2000 миллисекунд = 2 секунды
-}
-
 function createFireworks() {
     const canvas = document.getElementById('fireworksCanvas');
     const ctx = canvas.getContext('2d');

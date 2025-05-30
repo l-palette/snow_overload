@@ -43,7 +43,6 @@
             <ul>
                 <li><a href="index.html">Главная</a></li>
                 <li><a href="recipes.html">Рецепты</a></li>
-                <li><a href="forum.html">Форум</a></li>
                 <li><a href="login.html">Войти</a></li>
             </ul>
             
@@ -53,17 +52,13 @@
     <div class="content">
         <div class="form">
             <section id="contact-form">
-                <h2>Форма обратной связи</h2>
-                <label for="name">Имя:</label>
-                <input type="text" id="name" name="name" required>
-
+                <h2>Отправить на проверку</h2>
                 <label for="email">Электронная почта:</label>
                 <input type="email" id="email" name="email" required>
 
                 <label for="message">Сообщение:</label>
                 <textarea id="message" name="message" rows="5" required></textarea>
-                
-                <button class="recipe-btn" id="submit-button" onclick="showFireworks('Отправить', 'feedback.html')" disabled>Отправить</button>
+                <a href="feedback.html" class="recipe-btn">Отправить</a>
                 <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
             </section>
         </div>

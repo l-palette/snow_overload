@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пользователи</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .users-table th, .users-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .users-table th {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+        }
+
+        .users-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .role-admin {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .role-editor {
+            color: #48dbfb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="recipes.html">Рецепты</a></li>
+                <li><a href="login.html">Войти</a>
+            </ul>
+        </nav>
+    </div>
+    <div class="snow"></div>
+    <div class="content">
+        <h1>Список пользователей</h1>
+        <div id="users-container">
+            <div class="loading">Загрузка данных...</div>
+        </div>
+        <h1>Статистика</h1>
+        <!-- Yandex.Metrika informer -->
+
+        <a href="https://metrika.yandex.ru/stat/?id=99458613&amp;from=informer"
+
+        target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/99458613/3_0_FFFFFFFF_EFEFEFFF_0_uniques"
+
+        style="width:88px; height:31px; border:0;" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="99458613" data-lang="ru" /></a>
+
+        <!-- /Yandex.Metrika informer -->
+
+
+
+        <!-- Yandex.Metrika counter -->
+
+        <script type="text/javascript" >
+
+           (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+
+           m[i].l=1*new Date();
+
+           for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+
+           k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+
+           (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+
+
+           ym(99458613, "init", {
+
+                clickmap:true,
+
+                trackLinks:true,
+
+                accurateTrackBounce:true
+
+           });
+
+        </script>
+
+        <noscript><div><img src="https://mc.yandex.ru/watch/99458613" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+        <!-- /Yandex.Metrika counter -->
+    </div>
+    <div class="snowdrift"></div>
+    <div class="snowdrift1" style="left: 0%; width: 100%; height: 90px;"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('php/get_users.php')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('users-container');
+
+                    if (data.success) {
+                        if (data.users.length > 0) {
+                            let html = '<table class="users-table">';
+                            html += '<thead><tr><th>ID</th><th>Имя пользователя</th><th>Email</th><th>Роль</th></tr></thead><tbody>';
+
+                            data.users.forEach(user => {
+                                html += `<tr>
+                                    <td>${user.id}</td>
+                                    <td>${user.username}</td>
+                                    <td>${user.email}</td>
+                                    <td class="role-${user.role}">${user.role === 'admin' ? 'Администратор' : 'Редактор'}</td>
+                                </tr>`;
+                            });
+
+                            html += '</tbody></table>';
+                            container.innerHTML = html;
+                        } else {
+                            container.innerHTML = '<div class="error-message">Пользователи не найдены</div>';
+                        }
+                    } else {
+                        container.innerHTML = `<div class="error-message">${data.message || 'Ошибка загрузки данных'}</div>`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('users-container').innerHTML =
+                        `<div class="error-message">Ошибка соединения с сервером</div>`;
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
